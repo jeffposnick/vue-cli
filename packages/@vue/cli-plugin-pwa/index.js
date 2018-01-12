@@ -13,13 +13,16 @@ module.exports = (api, options) => {
     // generate /service-worker.js in production mode
     if (process.env.NODE_ENV === 'production') {
       webpackConfig
-        .plugin('sw-precache')
-          .use(require('sw-precache-webpack-plugin'), [{
+        .plugin('workbox')
+          .use(require('workbox-webpack-plugin').GenerateSW, [{
             cacheId: name,
-            filename: 'service-worker.js',
-            staticFileGlobs: [`${options.outputDir}/**/*.{js,html,css}`],
-            minify: true,
-            stripPrefix: `${options.outputDir}/`
+            importWorkboxFrom: 'cdn',
+            exclude: [
+              new RegExp('\.map$'),
+              new RegExp('img/icons/'),
+              new RegExp('favicon\.ico$'),
+              new RegExp('manifest\.json$')
+            ]
           }])
     }
   })
